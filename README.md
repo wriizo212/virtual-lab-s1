@@ -52,7 +52,7 @@ Guru boleh mengubah petunjuk, paparan markah, pemasa perbincangan, mod individu/
 
 Had ahli/pilihan mod terpakai pada pendaftaran baharu; kumpulan sedia ada tidak kehilangan ahli. Tetapan lain terpakai semasa aktiviti. Markah masih direkodkan ketika paparannya dimatikan. Reset memadam nama/kemajuan sesi tetapi mengekalkan tetapan guru.
 
-**Ringkasan kelas:** setiap sesi yang selesai menjana **kod kelas** `SCI1-KELAS-…` pada skrin hasil dan laporan yang membawa nama, kelas, markah, bonus dan cadangan TP. Murid menyalin kod (atau menghantarnya kepada guru); guru menampalnya dalam **Mod guru → Ringkasan kelas** — guru boleh mengimport banyak kod sekaligus, melihat jumlah/purata/tertinggi/terendah, membuang rekod dan mengeksport CSV. Kod tidak sah (disunting atau bukan format) ditolak dengan kiraan. Rekod ringkasan disimpan pada peranti guru sahaja dan tidak menyentuh sesi murid; padam sesi tidak memadam rekod ini.
+**Ringkasan kelas:** setiap sesi yang selesai menjana **kod kelas** `SCI1-KELAS-…` (teks + **kod QR**) pada skrin hasil dan laporan yang membawa nama, kelas, markah, bonus dan cadangan TP. Murid menunjukkan kod QR atau menyalin kod; guru mengimportnya dalam **Mod guru → Ringkasan kelas** melalui **imbasan kamera** (jika peranti menyokong) atau **tampalan kod berbilang** (teks lain diabaikan). Guru juga boleh melihat jumlah/purata/tertinggi/terendah, membuang rekod, mengeksport CSV, menyalin teks ringkasan, berkongsi (peranti menyokong navigasi kongsi) dan **mencetak / menyimpan PDF**. Kod tidak sah (disunting atau bukan format) ditolak dengan kiraan. Rekod disimpan pada peranti guru sahaja dan tidak menyentuh sesi murid; padam sesi tidak memadam rekod ini. **Panduan murid** (`panduan-kelas.html`) boleh dibuka daripada panel ini — langkah pasang PWA, ujian offline, senarai semak guru dan masalah biasa — untuk dipaparkan atau dicetak.
 
 ## Markah dan eksport
 
@@ -69,7 +69,7 @@ Laporan: identiti/ahli, kelas, tarikh Malaysia, hipotesis/ramalan, pemboleh ubah
 
 Manifest, ikon PNG 192/512 dan ikon iPad disediakan. Android/Chrome: **Pasang aplikasi** apabila prompt tersedia, atau menu browser. iPad/Safari: Kongsi → Tambah ke Skrin Utama. Sokongan bergantung pada browser/peranti. Rujukan: [MDN — Making PWAs installable](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-`vite.config.ts` menjana `sw.js` dan inventori aset build. Cache dipasang secara atomic dan diberi versi daripada hash kandungan. Fail aplikasi disediakan daripada cache tanpa API. Cache lama dibersihkan ketika pengaktifan versi baharu. Versi baharu menunggu pilihan **Muat semula versi baharu**, tanpa mengganggu aktiviti secara automatik. localStorage tidak dipadam oleh kemas kini cache. Rujukan: [MDN — Using Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers).
+`vite.config.ts` menjana `sw.js` dan inventori aset build. Cache dipasang secara atomic dan diberi versi daripada hash kandungan. Aset disediakan daripada cache tanpa API; navigasi dimuatkan daripada rangkaian apabila tersedia dan jatuh ke salinan cache (fail yang diminta, atau shell aplikasi) apabila offline. `.nojekyll` dijana automatik dalam build supaya GitHub Pages tidak memproses fail aplikasi dengan Jekyll. Cache lama dibersihkan ketika pengaktifan versi baharu. Versi baharu menunggu pilihan **Muat semula versi baharu**, tanpa mengganggu aktiviti secara automatik. localStorage tidak dipadam oleh kemas kini cache. Rujukan: [MDN — Using Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers).
 
 Worker hanya didaftarkan pada production; `npm run dev` tidak menguji offline. Browser boleh memadam cache/storage akibat tetapan pengguna, mod persendirian atau kekurangan ruang. Simpan laporan selepas selesai. Tiada penyegerakan antara peranti.
 
@@ -102,9 +102,15 @@ npm run test:e2e
 npm run test:pwa
 ```
 
-`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **47 unit tests, 15 browser regression tests dan 3 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
+`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **49 unit tests, 15 browser regression tests dan 4 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
 
-Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF dan ringkasan kelas (import kod, dedup, CSV, pengasingan daripada sesi murid). Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
+Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF, ringkasan kelas (import kod, imbas QR, cetak/kongsi, CSV, pengasingan daripada sesi murid), saluran kod QR (jana → imbas dalam unit test) dan halaman panduan yang kekal tersedia offline. Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
+
+## Alat sokongan
+
+- `public/panduan-kelas.html` — panduan murid/guru (QR pautan, langkah Android/iPad, ujian offline, senarai semak, masalah biasa); dicache untuk offline; boleh dicetak.
+- `scripts/live-check.mjs` — ujian laman HIDUP selepas deploy (PWA, ringkasan kelas, halaman panduan, offline). `scripts/inject-panduan-qr.cjs` — jana semula QR panduan apabila URL berubah. (Sentiasa letak skrip di `scripts/`, bukan `test-results/` — Playwright memadam `test-results` setiap larian.)
+- `tools/telegram-ringkasan-kelas.mjs` — hantar CSV ringkasan kelas ke Telegram guru (token dibaca daripada `.env` Hermes tempatan). Salinan sedia-guna dengan `.bat` dwi-klik berada di Desktop → `VIRTUAL-LAB-ALAT`.
 
 ## Deploy static
 

@@ -12,6 +12,7 @@ export default defineConfig({ plugins: [react(), {
     Object.values(bundle).forEach(file=>hash.update(file.type==='chunk'?file.code:file.source));
     ['favicon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','manifest.webmanifest','panduan-kelas.html'].forEach(file=>hash.update(readFileSync(new URL(`./public/${file}`,import.meta.url))));
     const version=hash.digest('hex').slice(0,16);
+    this.emitFile({type:'asset',fileName:'.nojekyll',source:''});
     this.emitFile({type:'asset',fileName:'sw.js',source:`
 const CACHE='sci1-lab-${version}';
 const BASE=new URL('./',self.location).href;
@@ -21,7 +22,10 @@ self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=
 self.addEventListener('message',event=>{if(event.data==='ACTIVATE_UPDATE')self.skipWaiting();});
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET'||!event.request.url.startsWith(BASE))return;
-  if(event.request.mode==='navigate'){event.respondWith(caches.open(CACHE).then(cache=>cache.match(new URL('index.html',BASE).href)).then(response=>response||fetch(event.request)));return;}
+  // Navigations go to the network first and fall back to cache; the cached
+  // copy of the requested file is preferred (keeps panduan-kelas.html working)
+  // before the app shell index.html.
+  if(event.request.mode==='navigate'){event.respondWith((async()=>{const cache=await caches.open(CACHE);try{return await fetch(event.request);}catch{return (await cache.match(event.request,{ignoreVary:true}))||(await cache.match(new URL('index.html',BASE).href));}})());return;}
   // The static app has no personalized responses. Ignore Vary: Origin emitted
   // by preview hosts when module requests differ from install-time requests.
   if(FILES.includes(event.request.url))event.respondWith(caches.open(CACHE).then(cache=>cache.match(event.request,{ignoreVary:true})).then(response=>response||fetch(event.request)));

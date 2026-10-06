@@ -57,3 +57,11 @@ test('phone teacher controls and install guidance fit without overflow',async({p
   await page.setViewportSize({width:390,height:844});await page.goto('/');await page.getByRole('button',{name:'Pasang aplikasi',exact:true}).tap();await expect(page.getByText(/iPad \/ Safari/)).toBeVisible();await teacher(page);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'test-results/phase5-phone.png',fullPage:true});
 });
+test('guide page loads with its QR and stays available offline',async({page,context})=>{
+  await page.goto('/');await page.evaluate(()=>navigator.serviceWorker.ready);
+  await context.setOffline(true);await page.goto('/panduan-kelas.html');
+  await expect(page.getByRole('heading',{name:/Makmal maya/})).toBeVisible();
+  await expect(page.locator('.qr-box svg')).toBeVisible();
+  await expect(page.getByText('https://wriizo212.github.io/virtual-lab-s1/',{exact:true})).toBeVisible();
+  await context.setOffline(false);
+});
