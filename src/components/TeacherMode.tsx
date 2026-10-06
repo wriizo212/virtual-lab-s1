@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react';
 import { Camera, ClipboardList, Copy, Download, Presentation, Printer, Share2, Trash2 } from 'lucide-react';
 import { FocusModal } from './FocusModal';
 import { DiscussMode } from './DiscussMode';
+import { teacherSheetHtml } from '../domain/discuss';
 import { useLab } from '../state/LabContext';
 import { analysisQuestions, formatLabDate, hypothesisOptions } from '../domain/learning';
 import { verifyTeacherPin } from '../domain/settings';
@@ -19,6 +20,7 @@ export function TeacherMode({onClose,onReset}:{onClose:()=>void;onReset:()=>void
   const [scanOpen,setScanOpen]=useState(false),[textManual,setTextManual]=useState<string|null>(null);
   const [pinOpen,setPinOpen]=useState(false),[newPin,setNewPin]=useState(''),[newPin2,setNewPin2]=useState(''),[pinMsg,setPinMsg]=useState('');
   const [discussOpen,setDiscussOpen]=useState(false);
+  const [sheetMsg,setSheetMsg]=useState('');
   const [demo]=useState(exampleReport);
   const settings=state.settings;const records=state.classRecords ?? [];
   const scores=records.map(record=>record.score);const average=scores.length?Math.round(scores.reduce((sum,value)=>sum+value,0)/scores.length*10)/10:0;const highest=scores.length?Math.max(...scores):0;const lowest=scores.length?Math.min(...scores):0;
@@ -48,6 +50,12 @@ export function TeacherMode({onClose,onReset}:{onClose:()=>void;onReset:()=>void
     popup.opener=null;popup.document.write(classSummaryHtml(records));popup.document.close();popup.focus();popup.print();
     setImportMsg('Pilih “Simpan sebagai PDF” dalam dialog cetak jika tersedia.');
   }
+  function printTeacherSheet() {
+    const popup=window.open('','_blank');
+    if(!popup){setSheetMsg('Tetingkap cetak disekat. Benarkan popup dan cuba lagi.');return;}
+    popup.opener=null;popup.document.write(teacherSheetHtml());popup.document.close();popup.focus();popup.print();
+    setSheetMsg('Helaian rujukan dibuka dalam tetingkap baharu. Pilih “Simpan sebagai PDF” jika mahu.');
+  }
   async function copyClassText() {
     const text=classSummaryText(records);
     try{await navigator.clipboard.writeText(text);setTextManual(null);setImportMsg('Ringkasan teks disalin — boleh tampal ke Telegram atau WhatsApp.');}
@@ -65,7 +73,8 @@ export function TeacherMode({onClose,onReset}:{onClose:()=>void;onReset:()=>void
     <div className="teacher-settings">{([{key:'hintsEnabled',label:'Aktifkan petunjuk'},{key:'scoreEnabled',label:'Paparkan markah'},{key:'discussionCountdown',label:'Pemasa perbincangan'}] as const).map(item=><label key={item.key}><input type="checkbox" checked={settings[item.key]} onChange={e=>updateSettings({...settings,[item.key]:e.target.checked})}/>{item.label}</label>)}
     <label>Mod yang dibenarkan<select value={settings.allowedModes} onChange={e=>updateSettings({...settings,allowedModes:e.target.value as typeof settings.allowedModes})}><option value="both">Individu dan kumpulan</option><option value="individual">Individu sahaja</option><option value="group">Kumpulan sahaja</option></select></label>
     <label>Maksimum ahli kumpulan<select value={settings.maxMembers} onChange={e=>updateSettings({...settings,maxMembers:Number(e.target.value)})}>{[2,3,4,5].map(n=><option key={n} value={n}>{n} orang</option>)}</select></label></div>
-    <div className="teacher-actions"><button className="secondary" onClick={()=>setClassOpen(!classOpen)} aria-expanded={classOpen}>{classOpen?'Tutup ringkasan kelas':'Ringkasan kelas'}</button><button className="secondary" onClick={()=>setDiscussOpen(true)}><Presentation size={16}/>Bincang bersama kelas</button><button className="secondary" onClick={()=>setAnswers(!answers)} aria-expanded={answers}>{answers?'Sembunyikan jawapan':'Lihat jawapan sebenar'}</button><button className="secondary" onClick={()=>setSample(!sample)} aria-expanded={sample}>{sample?'Tutup contoh laporan':'Lihat contoh laporan'}</button><button className="secondary" onClick={()=>setPinOpen(!pinOpen)} aria-expanded={pinOpen}>{pinOpen?'Tutup tukar PIN':'Tukar PIN guru'}</button><button className="secondary" disabled={!state.session} onClick={()=>setConfirm(true)}>Reset eksperimen</button></div>
+    <div className="teacher-actions"><button className="secondary" onClick={()=>setClassOpen(!classOpen)} aria-expanded={classOpen}>{classOpen?'Tutup ringkasan kelas':'Ringkasan kelas'}</button><button className="secondary" onClick={()=>setDiscussOpen(true)}><Presentation size={16}/>Bincang bersama kelas</button><button className="secondary" onClick={printTeacherSheet}><Printer size={16}/>Cetak helaian rujukan</button><button className="secondary" onClick={()=>setAnswers(!answers)} aria-expanded={answers}>{answers?'Sembunyikan jawapan':'Lihat jawapan sebenar'}</button><button className="secondary" onClick={()=>setSample(!sample)} aria-expanded={sample}>{sample?'Tutup contoh laporan':'Lihat contoh laporan'}</button><button className="secondary" onClick={()=>setPinOpen(!pinOpen)} aria-expanded={pinOpen}>{pinOpen?'Tutup tukar PIN':'Tukar PIN guru'}</button><button className="secondary" disabled={!state.session} onClick={()=>setConfirm(true)}>Reset eksperimen</button></div>
+    {sheetMsg&&<p role="status" className="small muted">{sheetMsg}</p>}
     {confirm&&<div className="teacher-confirm" role="alert"><p>Padam nama dan semua kemajuan sesi {state.session?.name}? Tetapan guru dikekalkan.</p><button className="secondary" onClick={()=>setConfirm(false)}>Batal reset</button><button className="primary" onClick={onReset}>Ya, padam sesi</button></div>}
     {classOpen&&<div className="class-summary"><h2>Ringkasan kelas</h2><p className="muted">Murid menyalin <strong>kod kelas</strong> pada skrin hasil atau laporan, kemudian menghantarnya kepada anda. Tampal satu atau lebih kod di bawah — teks lain diabaikan.</p>
     <label>Kod kelas murid<textarea rows={4} value={codeText} onChange={e=>setCodeText(e.target.value)} placeholder="Contoh: SCI1-KELAS-…"/></label>

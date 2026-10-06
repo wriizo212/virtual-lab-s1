@@ -58,5 +58,13 @@
 .discuss-controls{display:flex;gap:14px;justify-content:center;align-items:center;padding:16px;border-top:1px solid #dce3da;background:#fff;flex-wrap:wrap}
 .discuss-controls button{min-height:54px;font-size:16px;padding:0 28px}
 @media(max-width:820px){.discuss-tubes{grid-template-columns:repeat(2,1fr)}.discuss-tube .tube-visual{height:180px}.discuss-body{padding:24px 16px}}
+.discuss-notes{display:flex;flex-direction:column;gap:6px;padding:12px 22px;background:#fffbe8;border-top:1px solid #e6dcb4;color:#5a5330;font-size:clamp(.85rem,1.3vw,1.02rem);max-height:24vh;overflow:auto}
+.discuss-notes p{margin:0}
+.discuss-notes strong{color:#7a6a1f}
+.discuss-misconceptions{display:grid;gap:12px;width:100%;max-width:1020px;text-align:left}
+.discuss-misconception{background:#fff;border:1px solid #d8e3d1;border-radius:14px;padding:14px 18px;font-size:clamp(.9rem,1.5vw,1.15rem)}
+.discuss-misconception .belief{color:#a04a26;font-weight:600;margin:0}
+.discuss-misconception .truth{color:#2f5c3c;margin:6px 0 0}
+@media(max-width:820px){.discuss-notes{padding:10px 14px;font-size:.92rem}}
 .report-code-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .report-code-row strong{font-size:12px;background:#e9f1e0;border-radius:6px;padding:7px 10px;color:#587945;overflow-wrap:anywhere;font-weight:600}

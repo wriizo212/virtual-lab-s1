@@ -118,7 +118,11 @@ test('class discussion mode walks the teacher through the correct answers', asyn
   await page.getByRole('button', { name: 'Bincang bersama kelas' }).tap();
   const discuss = page.getByRole('dialog', { name: 'Bincang bersama kelas' });
   await expect(discuss).toBeVisible();
-  await expect(discuss.getByText('1 / 9')).toBeVisible();
+  await expect(discuss.getByText('1 / 10')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Nota guru' }).tap();
+  await expect(discuss.getByText('Skrip cakap:')).toBeVisible();
+  await expect(discuss.getByText('Soalan kelas:')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Nota guru' }).tap();
   await discuss.getByRole('button', { name: 'Seterusnya' }).tap();
   await expect(discuss.getByText('Hipotesis manakah yang betul?')).toBeVisible();
   await discuss.getByRole('button', { name: 'Tunjuk jawapan' }).tap();
@@ -127,10 +131,31 @@ test('class discussion mode walks the teacher through the correct answers', asyn
   for (let step = 0; step < 11; step++) {
     await discuss.getByRole('button', { name: /Seterusnya|Tunjuk jawapan/ }).tap();
   }
+  await expect(discuss.getByText('Betulkan bersama-sama')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Seterusnya' }).tap();
   await expect(discuss.getByText('PERCAMBAHAN')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Sebelum' }).tap();
+  await expect(discuss.getByText('Betulkan bersama-sama')).toBeVisible();
   await discuss.getByRole('button', { name: 'Sebelum' }).tap();
   await expect(discuss.getByText('SOALAN 4 / 4')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(discuss).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Tutup mod guru' })).toBeVisible();
+});
+test('teacher reference sheet opens printable with every answer and note', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Guru', exact: true }).tap();
+  await page.getByLabel('PIN guru', { exact: true }).fill('1234');
+  await page.getByRole('button', { name: 'Buka mod guru' }).tap();
+  const popupPromise = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'Cetak helaian rujukan' }).tap();
+  const sheet = await popupPromise;
+  await sheet.waitForLoadState('domcontentloaded');
+  await expect(sheet.getByText('Helaian Rujukan Guru', { exact: false }).first()).toBeVisible();
+  await expect(sheet.getByRole('heading', { name: 'Salah faham lazim' })).toBeVisible();
+  await expect(sheet.getByText('Jawapan: C. Suhu rendah memperlahankan aktiviti enzim dan proses metabolisme.', { exact: false })).toBeVisible();
+  await expect(sheet.getByText('Skrip cakap', { exact: false })).toHaveCount(0);
+  await expect(sheet.getByText(/Nota bincang/)).toBeVisible();
+  await expect(sheet.getByText('PERCAMBAHAN', { exact: false }).first()).toBeVisible();
+  await sheet.close();
 });
