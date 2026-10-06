@@ -27,6 +27,7 @@ await page.getByRole('button', { name: 'Import kod' }).click();
 const importMessage = await page.locator('.class-summary [role=status]').textContent().catch(() => null);
 const rows = await page.locator('.class-summary tbody tr').count();
 const storedRecords = await page.evaluate(() => JSON.parse(localStorage.getItem('sci1-germination:v1')).classRecords.length);
+const pinFeature = await page.getByRole('button', { name: 'Tukar PIN guru' }).isVisible().catch(() => false);
 await page.screenshot({ path: 'test-results/live-teacher.png' });
 await page.getByRole('button', { name: 'Tutup mod guru' }).click();
 
@@ -45,5 +46,5 @@ const offlineRuns = await page.getByText(/Anda sedang offline/).waitFor({ timeou
 const headingOffline = await page.getByRole('heading', { name: /Satu biji benih/ }).isVisible().catch(() => false);
 await context.setOffline(false);
 
-console.log(JSON.stringify({ url, title: await page.title(), offlineReady, swRegistrations, importMessage, rows, storedRecords, guideTitle, guideQr, offlineRuns, headingOffline, errors }, null, 2));
+console.log(JSON.stringify({ url, title: await page.title(), offlineReady, swRegistrations, importMessage, rows, storedRecords, pinFeature, guideTitle, guideQr, offlineRuns, headingOffline, errors }, null, 2));
 await browser.close();
