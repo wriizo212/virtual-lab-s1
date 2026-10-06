@@ -9,8 +9,11 @@ export async function sha256Hex(text: string): Promise<string> {
   return Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 // Optional build-time teacher lock (VITE_VLAB_PIN_HASH via .env.local); the app
-// only ever carries the SHA-256 hash, never the PIN itself.
+// only ever carries the SHA-256 hash, never the PIN itself. Production builds
+// only: dev servers and unit tests must never inherit a stray .env.local
+// (their suites log in with the 1234 default).
 export function bakedTeacherPinHash(): string {
+  if (!import.meta.env.PROD) return '';
   return String(import.meta.env.VITE_VLAB_PIN_HASH ?? '').toLowerCase();
 }
 export async function verifyTeacherPin(pin: string, storedPin: string, baked: string = bakedTeacherPinHash()): Promise<boolean> {

@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest';
-import { normalizeSettings, normalizeTeacherPin, sha256Hex, verifyTeacherPin } from './settings';
+import { bakedTeacherPinHash, normalizeSettings, normalizeTeacherPin, sha256Hex, verifyTeacherPin } from './settings';
 import { defaultSettings } from './model';
 import { exampleReport } from './demo';
 describe('teacher configuration',()=>{
@@ -17,6 +17,7 @@ describe('teacher configuration',()=>{
     expect(normalizeTeacherPin(undefined)).toBe('1234');
   });
   it('verifies teacher PINs against the device pin and an optional baked lock',async()=>{
+    expect(bakedTeacherPinHash()).toBe('');
     expect(await verifyTeacherPin('1234','1234')).toBe(true);
     expect(await verifyTeacherPin('1234','2468')).toBe(false);
     expect(await verifyTeacherPin('2468','2468')).toBe(true);
