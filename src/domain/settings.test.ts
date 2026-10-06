@@ -1,5 +1,5 @@
 import { describe,it,expect } from 'vitest';
-import { normalizeSettings, normalizeTeacherPin } from './settings';
+import { normalizeSettings, normalizeTeacherPin, sha256Hex, verifyTeacherPin } from './settings';
 import { defaultSettings } from './model';
 import { exampleReport } from './demo';
 describe('teacher configuration',()=>{
@@ -15,6 +15,17 @@ describe('teacher configuration',()=>{
     expect(normalizeTeacherPin('12')).toBe('1234');
     expect(normalizeTeacherPin('abcd')).toBe('1234');
     expect(normalizeTeacherPin(undefined)).toBe('1234');
+  });
+  it('verifies teacher PINs against the device pin and an optional baked lock',async()=>{
+    expect(await verifyTeacherPin('1234','1234')).toBe(true);
+    expect(await verifyTeacherPin('1234','2468')).toBe(false);
+    expect(await verifyTeacherPin('2468','2468')).toBe(true);
+    const baked=await sha256Hex('919293');
+    expect(baked).toMatch(/^[0-9a-f]{64}$/);
+    expect(await verifyTeacherPin('919293','1234',baked)).toBe(true);
+    expect(await verifyTeacherPin('1234','1234',baked)).toBe(false);
+    expect(await verifyTeacherPin('2468','2468',baked)).toBe(true);
+    expect(await verifyTeacherPin('1111','2468',baked)).toBe(false);
   });
   it('creates a separate complete example report each time',()=>{
     const a=exampleReport(),b=exampleReport();expect(a.id).not.toBe(b.id);expect(a.completedAt).toBeTruthy();expect(a.scores.analysis).toBe(4);expect(a.conclusion).toEqual(['AIR','OKSIGEN','SUHU']);

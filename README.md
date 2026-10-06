@@ -46,7 +46,7 @@ Hipotesis/ramalan dikunci selepas eksperimen bermula. Perubahan fizikal membatal
 
 ## Ruang guru
 
-Gear **Guru** di header; PIN lalai **1234** dan boleh ditukar dalam **Mod guru → Tukar PIN guru** (4–6 digit angka; disimpan pada peranti itu sahaja — setiap peranti menyimpan PIN sendiri). Ia kawalan kelas asas, bukan pengesahan akaun selamat. Dikunci semula selepas ditutup/refresh.
+Gear **Guru** di header; PIN lalai **1234**. Dua lapisan kunci: **(1) Kunci aplikasi** — jalankan alat Desktop → `VIRTUAL-LAB-ALAT` → **Kunci Mod Guru.bat** untuk menyuntik SATU kunci (hash SHA-256; PIN mentah tidak pernah masuk ke kod awam) yang diterima pada **semua peranti** selepas setiap tablet dimuat semula; selepas itu 1234 ditolak di mana-mana. **(2) PIN peranti** — boleh ditukar dalam Mod guru → Tukar PIN guru untuk peranti itu sahaja (berguna pada tablet peribadi guru). Kunci lalai 1234 masih berfungsi selagi alat Kunci Mod Guru belum dijalankan. Ia kawalan kelas asas, bukan pengesahan akaun; ruang guru yang benar-benar selamat memerlukan pelayan/akaun. Dikunci semula selepas ditutup/refresh.
 
 Guru boleh mengubah petunjuk, paparan markah, pemasa perbincangan, mod individu/kumpulan/kedua-duanya dan maksimum 2–5 ahli; melihat jawapan sebenar serta contoh laporan; reset sesi selepas pengesahan. Contoh menggunakan data berasingan dan tidak menggantikan sesi murid.
 
@@ -102,15 +102,16 @@ npm run test:e2e
 npm run test:pwa
 ```
 
-`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **50 unit tests, 16 browser regression tests dan 4 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
+`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **51 unit tests, 16 browser regression tests dan 4 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
 
-Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tukar PIN guru (sahkan + kekal selepas reload), tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF, ringkasan kelas (import kod, imbas QR, cetak/kongsi, CSV, pengasingan daripada sesi murid), saluran kod QR (jana → imbas dalam unit test) dan halaman panduan yang kekal tersedia offline. Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
+Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tukar PIN guru (sahkan + kekal selepas reload), kunci mod guru terbina (hash disuntik → 1234 ditolak, kunci baharu diterima), tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF, ringkasan kelas (import kod, imbas QR, cetak/kongsi, CSV, pengasingan daripada sesi murid), saluran kod QR (jana → imbas dalam unit test) dan halaman panduan yang kekal tersedia offline. Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
 
 ## Alat sokongan
 
 - `public/panduan-kelas.html` — panduan murid/guru (QR pautan, langkah Android/iPad, ujian offline, senarai semak, masalah biasa); dicache untuk offline; boleh dicetak.
 - `scripts/live-check.mjs` — ujian laman HIDUP selepas deploy (PWA, ringkasan kelas, halaman panduan, offline). `scripts/inject-panduan-qr.cjs` — jana semula QR panduan apabila URL berubah. (Sentiasa letak skrip di `scripts/`, bukan `test-results/` — Playwright memadam `test-results` setiap larian.)
 - `tools/telegram-ringkasan-kelas.mjs` — hantar CSV ringkasan kelas ke Telegram guru (token dibaca daripada `.env` Hermes tempatan). Salinan sedia-guna dengan `.bat` dwi-klik berada di Desktop → `VIRTUAL-LAB-ALAT`.
+- `scripts/set-teacher-pin.mjs` — suntik **kunci mod guru** ke semua peranti (sha256 ke `.env.local` yang gitignored) + bina & terbitkan semula; salinan `.bat` di Desktop → `VIRTUAL-LAB-ALAT` → "Kunci Mod Guru.bat". ⚠️ Bila `.env.local` wujud (VITE_VLAB_PIN_HASH), ujian suite yang login 1234 akan gagal — alih keluar sementara untuk menjalankan ujian.
 
 ## Deploy static
 

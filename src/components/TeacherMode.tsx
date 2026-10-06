@@ -3,6 +3,7 @@ import { Camera, ClipboardList, Copy, Download, Printer, Share2, Trash2 } from '
 import { FocusModal } from './FocusModal';
 import { useLab } from '../state/LabContext';
 import { analysisQuestions, formatLabDate, hypothesisOptions } from '../domain/learning';
+import { verifyTeacherPin } from '../domain/settings';
 import { classSummaryHtml, classSummaryText, decodeShareCode, extractShareCodes, mergeRecords, recordsCsv } from '../domain/classroom';
 import type { ClassRecord } from '../domain/model';
 import { FinalReport } from '../pages/FinalReport';
@@ -57,7 +58,7 @@ export function TeacherMode({onClose,onReset}:{onClose:()=>void;onReset:()=>void
   }
   return <FocusModal title="Mod guru" closeLabel="Tutup mod guru" onClose={onClose}>
     <div className="teacher-panel"><div className="eyebrow">RUANG GURU</div><h1>Mod guru</h1>
-    {!unlocked?<form onSubmit={e=>{e.preventDefault();if(pin===state.teacherPin){setUnlocked(true);setError('');setPin('');}else setError('PIN tidak tepat. Cuba semula.');}}><p>Masukkan PIN guru untuk mengurus aktiviti.</p><label>PIN guru<input type="password" inputMode="numeric" maxLength={6} autoComplete="off" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,''))}/></label>{error&&<p role="alert" className="error">{error}</p>}<button className="primary" type="submit">Buka mod guru</button></form>:<>
+    {!unlocked?<form onSubmit={async e=>{e.preventDefault();if(await verifyTeacherPin(pin,state.teacherPin)){setUnlocked(true);setError('');setPin('');}else setError('PIN tidak tepat. Cuba semula.');}}><p>Masukkan PIN guru untuk mengurus aktiviti.</p><label>PIN guru<input type="password" inputMode="numeric" maxLength={6} autoComplete="off" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,''))}/></label>{error&&<p role="alert" className="error">{error}</p>}<button className="primary" type="submit">Buka mod guru</button></form>:<>
     <p className="muted">Tetapan disimpan pada peranti ini. Had ahli dan pilihan mod digunakan untuk sesi baharu.</p>
     <div className="teacher-settings">{([{key:'hintsEnabled',label:'Aktifkan petunjuk'},{key:'scoreEnabled',label:'Paparkan markah'},{key:'discussionCountdown',label:'Pemasa perbincangan'}] as const).map(item=><label key={item.key}><input type="checkbox" checked={settings[item.key]} onChange={e=>updateSettings({...settings,[item.key]:e.target.checked})}/>{item.label}</label>)}
     <label>Mod yang dibenarkan<select value={settings.allowedModes} onChange={e=>updateSettings({...settings,allowedModes:e.target.value as typeof settings.allowedModes})}><option value="both">Individu dan kumpulan</option><option value="individual">Individu sahaja</option><option value="group">Kumpulan sahaja</option></select></label>
@@ -80,7 +81,7 @@ export function TeacherMode({onClose,onReset}:{onClose:()=>void;onReset:()=>void
     <div className="teacher-actions"><button className="secondary" onClick={()=>{setPinOpen(false);setNewPin('');setNewPin2('');setPinMsg('');}}>Tutup</button><button className="primary" onClick={savePin} disabled={!newPin||!newPin2}>Simpan PIN baharu</button></div></div>}
     {answers&&<div className="teacher-answer-key"><h2>Jawapan rujukan guru</h2><p>{hypothesisOptions[1]}</p><ul><li>A: air, oksigen dan suhu sesuai hadir → bercambah.</li><li>B: tiada air → tidak bercambah.</li><li>C: oksigen tidak tersedia; minyak menghalang kemasukan semula oksigen → tidak bercambah.</li><li>D: suhu 5°C tidak sesuai → tidak bercambah.</li></ul>{analysisQuestions.map(q=><p key={q.id}><strong>{q.question}</strong><br/>{q.explanation}</p>)}<p>Kesimpulan: air + oksigen + suhu sesuai.</p></div>}
     {sample&&<div className="teacher-sample"><p className="info-strip">CONTOH SAHAJA — data sesi murid tidak diubah.</p><FinalReport exampleSession={demo}/></div>}
-    <p className="small muted">PIN guru disimpan pada peranti ini (lalai 1234, boleh ditukar di atas). Ia kawalan kelas asas, bukan pengesahan akaun selamat.</p>
+    <p className="small muted">PIN disimpan pada peranti ini (lalai 1234). Untuk kunci SEMUA tablet dengan PIN anda sahaja, jalankan alat <strong>"Kunci Mod Guru"</strong> di Desktop → VIRTUAL-LAB-ALAT. Ia kawalan kelas asas, bukan pengesahan akaun selamat.</p>
     </>}</div>
   </FocusModal>;
 }
