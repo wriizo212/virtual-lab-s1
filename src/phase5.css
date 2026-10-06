@@ -61,6 +61,7 @@
 .discuss-notes{display:flex;flex-direction:column;gap:6px;padding:12px 22px;background:#fffbe8;border-top:1px solid #e6dcb4;color:#5a5330;font-size:clamp(.85rem,1.3vw,1.02rem);max-height:24vh;overflow:auto}
 .discuss-notes p{margin:0}
 .discuss-notes strong{color:#7a6a1f}
+.discuss-notes .hint{color:#8a7b3e;font-weight:600}
 .discuss-misconceptions{display:grid;gap:12px;width:100%;max-width:1020px;text-align:left}
 .discuss-misconception{background:#fff;border:1px solid #d8e3d1;border-radius:14px;padding:14px 18px;font-size:clamp(.9rem,1.5vw,1.15rem)}
 .discuss-misconception .belief{color:#a04a26;font-weight:600;margin:0}
