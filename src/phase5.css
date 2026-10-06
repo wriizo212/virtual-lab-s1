@@ -24,5 +24,39 @@
 .pin-change h2{font-size:1.15rem;margin-bottom:6px}
 .pin-change label{display:grid;gap:8px;margin-top:10px;font-weight:600;font-size:14px}
 .pin-change .teacher-actions{margin:14px 0 0}
+.discuss-overlay{position:fixed;inset:0;z-index:30;background:#f6f7f2;display:flex;flex-direction:column}
+.discuss-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 22px;border-bottom:1px solid #dce3da;background:#fff;flex-wrap:wrap}
+.discuss-top strong{font-size:13px;letter-spacing:2px;color:#547468}
+.discuss-top-actions{display:flex;align-items:center;gap:10px}
+.discuss-progress{font-size:14px;color:#61776b;font-variant-numeric:tabular-nums;margin-right:6px}
+.discuss-body{flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:34px 26px;gap:20px;max-width:1240px;width:100%;margin:0 auto}
+.discuss-body h1{font-size:clamp(1.8rem,4.2vw,3.1rem);line-height:1.28}
+.discuss-body h1 em{font-style:normal;color:#12665b}
+.discuss-body h2{font-size:clamp(1.4rem,2.8vw,2.2rem)}
+.discuss-lead{font-size:clamp(1.02rem,1.7vw,1.35rem);color:#5d7168;max-width:920px}
+.discuss-badge{display:inline-flex;align-items:center;gap:8px;background:#e5efdc;color:#33582c;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:700;letter-spacing:1.2px}
+.discuss-options{display:grid;gap:12px;width:100%;max-width:940px;text-align:left}
+.discuss-option{border:1px solid #d5dfd5;border-radius:14px;padding:15px 20px;font-size:clamp(1rem,1.6vw,1.28rem);background:#fff;display:flex;gap:14px;align-items:flex-start}
+.discuss-option .letter{font-weight:700;color:#607569}
+.discuss-option.correct{border-color:#12665b;background:#e9f4e4;box-shadow:inset 0 0 0 2px #12665b}
+.discuss-option.correct strong{margin-left:auto;color:#2f6b3c;white-space:nowrap}
+.discuss-answer{background:#e9f4e4;border:1px solid #c9dfc0;border-radius:16px;padding:20px 24px;max-width:960px;width:100%;text-align:left;font-size:clamp(1rem,1.6vw,1.25rem)}
+.discuss-answer strong{color:#2f5c3c;display:block;margin-bottom:8px}
+.discuss-answer p{color:#4c6b41;font-size:clamp(.95rem,1.5vw,1.15rem)}
+.discuss-tubes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;width:100%;max-width:1080px}
+.discuss-tube{background:#fff;border:1px solid #d8e3d1;border-radius:16px;padding:14px 10px;text-align:center}
+.discuss-tube .tube-visual{height:230px}
+.discuss-tube b{font-size:clamp(1rem,1.5vw,1.2rem);display:block;margin-bottom:4px}
+.discuss-tube span{font-size:clamp(.85rem,1.25vw,1.02rem);color:#5c7268;display:block;margin-top:6px}
+.discuss-tube .yes-text{color:#2f6b3c;font-weight:700}
+.discuss-tube .no-text{color:#a04a26;font-weight:700}
+.discuss-table{width:100%;max-width:920px;border-collapse:collapse;font-size:clamp(.95rem,1.5vw,1.2rem)}
+.discuss-table th,.discuss-table td{border:1px solid #d3dfd6;padding:12px 14px;text-align:center}
+.discuss-table thead th{background:#e9f3e4}
+.discuss-table td.yes{color:#2f6b3c;font-weight:700}
+.discuss-table td.no{color:#a04a26;font-weight:700}
+.discuss-controls{display:flex;gap:14px;justify-content:center;align-items:center;padding:16px;border-top:1px solid #dce3da;background:#fff;flex-wrap:wrap}
+.discuss-controls button{min-height:54px;font-size:16px;padding:0 28px}
+@media(max-width:820px){.discuss-tubes{grid-template-columns:repeat(2,1fr)}.discuss-tube .tube-visual{height:180px}.discuss-body{padding:24px 16px}}
 .report-code-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .report-code-row strong{font-size:12px;background:#e9f1e0;border-radius:6px;padding:7px 10px;color:#587945;overflow-wrap:anywhere;font-weight:600}

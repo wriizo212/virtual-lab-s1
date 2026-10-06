@@ -50,6 +50,8 @@ Gear **Guru** di header; PIN lalai **1234**. Dua lapisan kunci: **(1) Kunci apli
 
 Guru boleh mengubah petunjuk, paparan markah, pemasa perbincangan, mod individu/kumpulan/kedua-duanya dan maksimum 2–5 ahli; melihat jawapan sebenar serta contoh laporan; reset sesi selepas pengesahan. Contoh menggunakan data berasingan dan tidak menggantikan sesi murid.
 
+**Bincang bersama kelas:** butang dalam Mod guru membuka **mod pembentangan skrin penuh** untuk perbincangan selepas murid selesai — bermula dengan soalan penyiasatan → hipotesis (jawapan betul didedah bila guru tekan "Tunjuk jawapan") → ramalan vs bukti (visual tabung A–D dengan sebab) → jadual keputusan penuh → empat soalan analisis (satu demi satu, didedah langkah demi langkah) → kesimpulan AIR + OKSIGEN + SUHU. Kawalan: butang Sebelum/Seterusnya, anak panah ←/→, Esc keluar, dan butang **skrin penuh** untuk projektor.
+
 Had ahli/pilihan mod terpakai pada pendaftaran baharu; kumpulan sedia ada tidak kehilangan ahli. Tetapan lain terpakai semasa aktiviti. Markah masih direkodkan ketika paparannya dimatikan. Reset memadam nama/kemajuan sesi tetapi mengekalkan tetapan guru.
 
 **Ringkasan kelas:** setiap sesi yang selesai menjana **kod kelas** `SCI1-KELAS-…` (teks + **kod QR**) pada skrin hasil dan laporan yang membawa nama, kelas, markah, bonus dan cadangan TP. Murid menunjukkan kod QR atau menyalin kod; guru mengimportnya dalam **Mod guru → Ringkasan kelas** melalui **imbasan kamera** (jika peranti menyokong) atau **tampalan kod berbilang** (teks lain diabaikan). Guru juga boleh melihat jumlah/purata/tertinggi/terendah, membuang rekod, mengeksport CSV, menyalin teks ringkasan, berkongsi (peranti menyokong navigasi kongsi) dan **mencetak / menyimpan PDF**. Kod tidak sah (disunting atau bukan format) ditolak dengan kiraan. Rekod disimpan pada peranti guru sahaja dan tidak menyentuh sesi murid; padam sesi tidak memadam rekod ini. **Panduan murid** (`panduan-kelas.html`) boleh dibuka daripada panel ini — langkah pasang PWA, ujian offline, senarai semak guru dan masalah biasa — untuk dipaparkan atau dicetak.
@@ -102,16 +104,16 @@ npm run test:e2e
 npm run test:pwa
 ```
 
-`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **51 unit tests, 16 browser regression tests dan 4 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
+`test:pwa` membina aplikasi, menjalankan preview port 4173 dan suite production. Semakan terakhir: **51 unit tests, 17 browser regression tests dan 4 production/PWA tests lulus**, bersama build. Audit npm: 0 vulnerability dilaporkan.
 
-Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tukar PIN guru (sahkan + kekal selepas reload), kunci mod guru terbina (hash disuntik → 1234 ditolak, kunci baharu diterima), tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF, ringkasan kelas (import kod, imbas QR, cetak/kongsi, CSV, pengasingan daripada sesi murid), saluran kod QR (jana → imbas dalam unit test) dan halaman panduan yang kekal tersedia offline. Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
+Meliputi individu/kumpulan, refresh/reset, roles, touch drag Chromium, telefon 390px, tablet 1024×768, analisis, skor, laporan, PIN salah/betul, tukar PIN guru (sahkan + kekal selepas reload), kunci mod guru terbina (hash disuntik → 1234 ditolak, kunci baharu diterima), mod bincang bersama kelas (dedahan jawapan langkah demi langkah, navigasi kembali, Esc), tetapan/had ahli, contoh laporan tanpa menukar sesi, kebolehpasangan Chromium, eksperimen penuh selepas internet dimatikan, reload offline, HTML kendiri, salip kod, cetak/PDF, ringkasan kelas (import kod, imbas QR, cetak/kongsi, CSV, pengasingan daripada sesi murid), saluran kod QR (jana → imbas dalam unit test) dan halaman panduan yang kekal tersedia offline. Screenshot disemak. Pemasangan iPad/Android fizikal dan pengujian kelas sebenar masih diperlukan.
 
 ## Alat sokongan
 
 - `public/panduan-kelas.html` — panduan murid/guru (QR pautan, langkah Android/iPad, ujian offline, senarai semak, masalah biasa); dicache untuk offline; boleh dicetak.
 - `scripts/live-check.mjs` — ujian laman HIDUP selepas deploy (PWA, ringkasan kelas, halaman panduan, offline). `scripts/inject-panduan-qr.cjs` — jana semula QR panduan apabila URL berubah. (Sentiasa letak skrip di `scripts/`, bukan `test-results/` — Playwright memadam `test-results` setiap larian.)
 - `tools/telegram-ringkasan-kelas.mjs` — hantar CSV ringkasan kelas ke Telegram guru (token dibaca daripada `.env` Hermes tempatan). Salinan sedia-guna dengan `.bat` dwi-klik berada di Desktop → `VIRTUAL-LAB-ALAT`.
-- `scripts/set-teacher-pin.mjs` — suntik **kunci mod guru** ke semua peranti (sha256 ke `.env.local` yang gitignored) + bina & terbitkan semula; salinan `.bat` di Desktop → `VIRTUAL-LAB-ALAT` → "Kunci Mod Guru.bat". ⚠️ Bila `.env.local` wujud (VITE_VLAB_PIN_HASH), ujian suite yang login 1234 akan gagal — alih keluar sementara untuk menjalankan ujian.
+- `scripts/set-teacher-pin.mjs` — suntik **kunci mod guru** ke semua peranti (sha256 ke `.env.local` yang gitignored) + bina & terbitkan semula; salinan `.bat` di Desktop → `VIRTUAL-LAB-ALAT` → "Kunci Mod Guru.bat". ⚠️ Bila `.env.local` wujud (VITE_VLAB_PIN_HASH), ujian/skrip yang login 1234 akan gagal — alihkan sementara (`mv .env.local .env.local.bak`), jalankan ujian, kemudian pulihkan. `scripts/live-check.mjs` menyokong pemboleh ubah `VLAB_PIN=<pin>` apabila kunci aktif.
 
 ## Deploy static
 

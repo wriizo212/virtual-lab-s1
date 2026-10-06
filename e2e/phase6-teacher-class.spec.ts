@@ -110,3 +110,27 @@ test('teacher PIN can be changed on the device', async ({ page }) => {
   const storedPin = await page.evaluate(() => JSON.parse(localStorage.getItem('sci1-germination:v1')!).teacherPin);
   expect(storedPin).toBe('2468');
 });
+test('class discussion mode walks the teacher through the correct answers', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Guru', exact: true }).tap();
+  await page.getByLabel('PIN guru', { exact: true }).fill('1234');
+  await page.getByRole('button', { name: 'Buka mod guru' }).tap();
+  await page.getByRole('button', { name: 'Bincang bersama kelas' }).tap();
+  const discuss = page.getByRole('dialog', { name: 'Bincang bersama kelas' });
+  await expect(discuss).toBeVisible();
+  await expect(discuss.getByText('1 / 9')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Seterusnya' }).tap();
+  await expect(discuss.getByText('Hipotesis manakah yang betul?')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Tunjuk jawapan' }).tap();
+  await expect(discuss.getByText('✓ BETUL')).toBeVisible();
+  await expect(discuss.getByText(/cahaya/).first()).toBeVisible();
+  for (let step = 0; step < 11; step++) {
+    await discuss.getByRole('button', { name: /Seterusnya|Tunjuk jawapan/ }).tap();
+  }
+  await expect(discuss.getByText('PERCAMBAHAN')).toBeVisible();
+  await discuss.getByRole('button', { name: 'Sebelum' }).tap();
+  await expect(discuss.getByText('SOALAN 4 / 4')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(discuss).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Tutup mod guru' })).toBeVisible();
+});
