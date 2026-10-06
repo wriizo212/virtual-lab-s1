@@ -1,0 +1,8 @@
+import { ArrowRight, Shuffle, FlaskConical, Eye, ClipboardList, Megaphone, UserRound } from 'lucide-react';
+import { assignRoles } from '../domain/model';
+import { useLab } from '../state/LabContext';
+const icons = [UserRound, FlaskConical, Eye, ClipboardList, Megaphone];
+export function RoleAssignment() {
+  const { state, updateSession } = useLab(); const session = state.session!;
+  return <section className="panel roles-panel"><div className="eyebrow">LANGKAH 02 / KERJASAMA</div><h1>Setiap ahli, satu sumbangan.</h1><p className="muted">Setiap ahli perlu mengambil bahagian dalam eksperimen. Peranan membantu anda bekerjasama dan bergilir menggunakan tablet.</p><div className="role-grid">{session.members.map((member, i) => { const Icon = icons[i]; return <article className="role-card" key={member.id}><div className="member-icon"><Icon size={24}/></div><span className="small muted">AHLI {i + 1}</span><h3>{member.name}</h3>{member.roles.map(role => <p key={role}>{role}</p>)}</article>; })}</div><div className="info-strip"><UserRound size={20}/><span>Giliran pertama: <strong>{session.members[0].name}</strong>. Ahli seterusnya akan mengambil giliran pada aktiviti berikutnya.</span></div><div className="actions"><button className="secondary" onClick={() => { const rotation = (session.roleRotation + 1) % session.members.length; updateSession({ ...session, roleRotation: rotation, members: assignRoles(session.members, rotation) }); }}><Shuffle size={18}/> Tukar peranan</button><button className="primary" onClick={() => updateSession({ ...session, screen: 'ready' })}>Teruskan <ArrowRight size={18}/></button></div></section>;
+}

@@ -1,0 +1,46 @@
+import { test, expect } from '@playwright/test';
+test('individual registration, refresh, resume and reset', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: /Satu biji benih/ })).toBeVisible();
+  await page.screenshot({ path: 'test-results/tablet-landing.png', fullPage: true });
+  await page.getByRole('button', { name: /Individu Teroka/ }).click();
+  await page.getByRole('button', { name: 'Teruskan' }).click();
+  await expect(page.getByRole('alert')).toBeVisible();
+  await page.getByLabel('Nama murid').fill('Aina'); await page.getByLabel('Kelas', { exact: true }).fill('1 Bestari');
+  await page.getByRole('button', { name: 'Teruskan' }).click();
+  await expect(page.getByRole('heading', { name: 'Hai, Aina.' })).toBeVisible();
+  await page.reload(); await expect(page.getByRole('heading', { name: 'Hai, Aina.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Skrin utama', exact: true }).first().click();
+  await page.getByRole('button', { name: /Sambung sesi: Aina/ }).click();
+  await page.getByRole('button', { name: 'Reset sesi', exact: true }).click();
+  await page.getByRole('button', { name: 'Batal' }).click();
+  await expect(page.getByRole('heading', { name: 'Hai, Aina.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Reset sesi', exact: true }).click();
+  await page.getByRole('button', { name: 'Ya, reset sesi' }).click();
+  await page.reload(); await expect(page.getByRole('button', { name: /Individu Teroka/ })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+test('group roles rotate and persist on a touch tablet', async ({ page }) => {
+  await page.goto('/'); await page.getByRole('button', { name: /Kumpulan 2/ }).click();
+  await page.getByLabel('Nama kumpulan').fill('Tunas'); await page.getByLabel('Kelas', { exact: true }).fill('1 Cekal');
+  await page.getByLabel('Ahli 1', { exact: true }).fill('Ahmad'); await page.getByLabel('Ahli 2', { exact: true }).fill('Siti'); await page.getByLabel('Ahli 3', { exact: true }).fill('Mei');
+  await page.getByRole('button', { name: 'Tetapkan peranan' }).tap();
+  await expect(page.locator('.role-card').first()).toContainText('Ketua Eksperimen');
+  await page.getByRole('button', { name: 'Tukar peranan' }).tap();
+  await expect(page.locator('.role-card').nth(1)).toContainText('Ketua Eksperimen');
+  await page.reload(); await expect(page.locator('.role-card').nth(1)).toContainText('Ketua Eksperimen');
+  await page.screenshot({ path: 'test-results/tablet-group.png', fullPage: true });
+  await page.getByRole('button', { name: 'Teruskan' }).tap();
+  await expect(page.getByRole('heading', { name: 'Tunas', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Kemajuan eksperimen' }).locator('li')).toHaveCount(9);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+test('mobile fallback has no page overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 }); await page.goto('/');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole('button', { name: /Kumpulan 2/ }).click(); await page.getByLabel('Bilangan ahli').selectOption('5');
+  await expect(page.getByLabel('Ahli 5', { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: 'test-results/mobile-registration.png', fullPage: true });
+});
