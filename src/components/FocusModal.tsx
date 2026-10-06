@@ -10,7 +10,11 @@ export function FocusModal({ title, onClose, children, closeLabel = 'Tutup pemer
     document.body.style.overflow = 'hidden';
     ref.current?.querySelector<HTMLButtonElement>('button')?.focus();
     function keyHandler(event: KeyboardEvent) {
-      if (event.key === 'Escape') closeRef.current();
+      if (event.key === 'Escape') {
+        // Nested modals: only the topmost dialog reacts to Escape.
+        const dialogs = document.querySelectorAll<HTMLElement>('[role="dialog"]');
+        if (dialogs[dialogs.length - 1] === ref.current) closeRef.current();
+      }
       if (event.key === 'Tab') {
         const controls = ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]');
         if (!controls?.length) return;

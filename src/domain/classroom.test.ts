@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import QRCode from 'qrcode';
 import { createSession } from './model';
 import { finishSession } from './learning';
-import { decodeShareCode, encodeShareCode, extractShareCodes, mergeRecords, recordsCsv } from './classroom';
+import { classSummaryHtml, classSummaryText, decodeShareCode, encodeShareCode, extractShareCodes, mergeRecords, recordsCsv } from './classroom';
+import { decodeQrFromImageData } from './qrscan';
 
 function finished(name: string, className: string, mode: 'individual' | 'group' = 'individual') {
   let session = createSession(mode, name, className, mode === 'group' ? ['Aina', 'Siti', 'Mei'] : []);
@@ -64,5 +66,27 @@ describe('class share codes', () => {
     expect(csv).toContain('"Aina, ""Cekal"""');
     expect(csv).toContain("'=SUM(A1)");
     expect(csv).toContain('25.5');
+  });
+  it('round-trips a class code through the QR pipeline used by the camera scanner', () => {
+    const code = encodeShareCode(finished('Aina <Sains>', '1 AMANAH'));
+    const qr = QRCode.create(code, { errorCorrectionLevel: 'M' });
+    const scale = 6, margin = 4, size = qr.modules.size;
+    const dim = (size + margin * 2) * scale;
+    const pixels = new Uint8ClampedArray(dim * dim * 4).fill(255);
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      if (!qr.modules.data[y * size + x]) continue;
+      for (let dy = 0; dy < scale; dy++) for (let dx = 0; dx < scale; dx++) {
+        const index = (((y + margin) * scale + dy) * dim + ((x + margin) * scale + dx)) * 4;
+        pixels[index] = 0; pixels[index + 1] = 0; pixels[index + 2] = 0; pixels[index + 3] = 255;
+      }
+    }
+    expect(decodeQrFromImageData(pixels, dim, dim)).toBe(code);
+  });
+  it('builds printable and copyable class summaries with escaped names', () => {
+    const records = [decodeShareCode(encodeShareCode(finished('Aina <Sains>', '1 Bestari')))!, decodeShareCode(encodeShareCode(finished('Kumpulan Tunas', '1 Cekal', 'group')))!];
+    const html = classSummaryHtml(records);
+    expect(html).toContain('Aina &lt;Sains&gt;');
+    expect(html).toContain('<strong>2</strong> rekod');
+    expect(classSummaryText(records)).toContain('Aina <Sains> (1 Bestari)');
   });
 });

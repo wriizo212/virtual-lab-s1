@@ -7,10 +7,10 @@ export default defineConfig({ plugins: [react(), {
   name:'virtual-lab-offline',
   apply:'build',
   generateBundle(_options,bundle) {
-    const files=[...new Set(['index.html','favicon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','manifest.webmanifest',...Object.keys(bundle).filter(name=>!name.endsWith('.map'))])];
+    const files=[...new Set(['index.html','favicon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','manifest.webmanifest','panduan-kelas.html',...Object.keys(bundle).filter(name=>!name.endsWith('.map'))])];
     const hash=createHash('sha256');
     Object.values(bundle).forEach(file=>hash.update(file.type==='chunk'?file.code:file.source));
-    ['favicon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','manifest.webmanifest'].forEach(file=>hash.update(readFileSync(new URL(`./public/${file}`,import.meta.url))));
+    ['favicon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','manifest.webmanifest','panduan-kelas.html'].forEach(file=>hash.update(readFileSync(new URL(`./public/${file}`,import.meta.url))));
     const version=hash.digest('hex').slice(0,16);
     this.emitFile({type:'asset',fileName:'sw.js',source:`
 const CACHE='sci1-lab-${version}';
