@@ -1,9 +1,9 @@
 import { defaultSettings, type AppState } from '../domain/model';
 import { tubeIds } from '../domain/experiment';
-import { normalizeSettings } from '../domain/settings';
+import { defaultTeacherPin, normalizeSettings, normalizeTeacherPin } from '../domain/settings';
 export const STORAGE_KEY = 'sci1-germination:v1';
 export interface SessionRepository { load(): AppState; save(state: AppState): void; clear(): void }
-export const initialState = (): AppState => ({ version: 1, session: null, settings: { ...defaultSettings }, soundEnabled: false, classRecords: [] });
+export const initialState = (): AppState => ({ version: 1, session: null, settings: { ...defaultSettings }, soundEnabled: false, classRecords: [], teacherPin: defaultTeacherPin });
 // Replace this adapter with a remote repository when a class dashboard is introduced.
 export const localRepository: SessionRepository = {
   load() {
@@ -22,6 +22,7 @@ export const localRepository: SessionRepository = {
       }
       if (!Array.isArray(data.classRecords)) data.classRecords = [];
       else data.classRecords = data.classRecords.filter(record => record && typeof record.code === 'string' && typeof record.name === 'string' && typeof record.className === 'string');
+      data.teacherPin = normalizeTeacherPin(data.teacherPin);
       return { ...initialState(), ...data, settings: normalizeSettings(data.settings) };
     } catch { return initialState(); }
   },

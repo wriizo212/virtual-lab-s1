@@ -20,5 +20,9 @@
 .class-summary textarea[readonly]{background:#f4f8ef}
 @media(max-width:600px){.class-code-main{flex-direction:column}}
 .class-code-card .secondary{align-self:flex-start}
+.pin-change{margin:22px 0;padding:18px 20px;border:1px solid #d2e0d6;border-radius:14px;background:#f7fbf4}
+.pin-change h2{font-size:1.15rem;margin-bottom:6px}
+.pin-change label{display:grid;gap:8px;margin-top:10px;font-weight:600;font-size:14px}
+.pin-change .teacher-actions{margin:14px 0 0}
 .report-code-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .report-code-row strong{font-size:12px;background:#e9f1e0;border-radius:6px;padding:7px 10px;color:#587945;overflow-wrap:anywhere;font-weight:600}

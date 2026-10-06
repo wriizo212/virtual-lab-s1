@@ -30,7 +30,7 @@ export interface Session {
   scores: { hypothesis: number; setup: number; observation: number; results: number; analysis: number; conclusion: number; bonus: number };
 }
 export interface ClassRecord { code: string; name: string; className: string; mode: Mode; score: number; bonus: number; tp: string; members: number; completedAt: string; addedAt: string }
-export interface AppState { version: 1; session: Session | null; settings: TeacherSettings; soundEnabled: boolean; classRecords: ClassRecord[] }
+export interface AppState { version: 1; session: Session | null; settings: TeacherSettings; soundEnabled: boolean; classRecords: ClassRecord[]; teacherPin: string }
 export const defaultSettings: TeacherSettings = { hintsEnabled: true, scoreEnabled: true, allowedModes: 'both', maxMembers: 5, discussionCountdown: true };
 export const roles = ['Ketua Eksperimen', 'Pengendali Bahan Maya', 'Pemerhati', 'Pencatat', 'Pembentang'];
 export function assignRoles(members: Member[], rotation = 0): Member[] {

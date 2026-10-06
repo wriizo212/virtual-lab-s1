@@ -85,3 +85,28 @@ test('student result screen offers a copyable class code', async ({ page }) => {
   await page.getByRole('button', { name: 'Lihat laporan' }).tap();
   await expect(page.locator('.report-qr-row .class-qr')).toBeVisible();
 });
+test('teacher PIN can be changed on the device', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Guru', exact: true }).tap();
+  await page.getByLabel('PIN guru', { exact: true }).fill('1234');
+  await page.getByRole('button', { name: 'Buka mod guru' }).tap();
+  await page.getByRole('button', { name: 'Tukar PIN guru' }).tap();
+  await page.getByLabel('PIN baharu', { exact: true }).fill('2468');
+  await page.getByLabel('Ulang PIN baharu', { exact: true }).fill('2499');
+  await page.getByRole('button', { name: 'Simpan PIN baharu' }).tap();
+  await expect(page.getByText('PIN tidak sama. Taip semula dengan teliti.')).toBeVisible();
+  await page.getByLabel('Ulang PIN baharu', { exact: true }).fill('2468');
+  await page.getByRole('button', { name: 'Simpan PIN baharu' }).tap();
+  await expect(page.getByText(/PIN guru telah dikemas kini/)).toBeVisible();
+  await page.getByRole('button', { name: 'Tutup mod guru' }).tap();
+  await page.reload();
+  await page.getByRole('button', { name: 'Guru', exact: true }).tap();
+  await page.getByLabel('PIN guru', { exact: true }).fill('1234');
+  await page.getByRole('button', { name: 'Buka mod guru' }).tap();
+  await expect(page.getByText('PIN tidak tepat. Cuba semula.')).toBeVisible();
+  await page.getByLabel('PIN guru', { exact: true }).fill('2468');
+  await page.getByRole('button', { name: 'Buka mod guru' }).tap();
+  await expect(page.getByRole('button', { name: 'Tukar PIN guru' })).toBeVisible();
+  const storedPin = await page.evaluate(() => JSON.parse(localStorage.getItem('sci1-germination:v1')!).teacherPin);
+  expect(storedPin).toBe('2468');
+});

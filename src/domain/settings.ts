@@ -1,4 +1,8 @@
 import { defaultSettings, type TeacherSettings } from './model';
+export const defaultTeacherPin = '1234';
+export function normalizeTeacherPin(raw: unknown): string {
+  return typeof raw === 'string' && /^\d{4,6}$/.test(raw) ? raw : defaultTeacherPin;
+}
 export function normalizeSettings(raw:Partial<TeacherSettings>):TeacherSettings {
   return {
     hintsEnabled:typeof raw.hintsEnabled==='boolean'?raw.hintsEnabled:defaultSettings.hintsEnabled,
