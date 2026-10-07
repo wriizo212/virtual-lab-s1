@@ -67,5 +67,49 @@
 .discuss-misconception .belief{color:#a04a26;font-weight:600;margin:0}
 .discuss-misconception .truth{color:#2f5c3c;margin:6px 0 0}
 @media(max-width:820px){.discuss-notes{padding:10px 14px;font-size:.92rem}}
+/* ===== UX "WOW" layer: rail perjalanan, confetti, maskot, lencana ===== */
+#confetti-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:70}
+.progress-nav ol{display:flex;gap:0;align-items:flex-start;justify-content:space-between;list-style:none;margin:0;padding:6px 4px 2px;overflow-x:auto}
+.progress-nav li{flex:1;min-width:88px;position:relative;text-align:center}
+.progress-nav li:not(:first-child)::before{content:"";position:absolute;top:17px;right:50%;left:-50%;height:3px;background:#dfe9dd;border-radius:2px}
+.progress-nav li.complete-step:not(:first-child)::before,.progress-nav li.active-step:not(:first-child)::before{background:#79c26d}
+.progress-nav li button{position:relative;z-index:1;border:0;background:none;display:flex;align-items:center;flex-direction:column;gap:6px;font-size:11.5px;padding:0;min-height:64px;width:100%;color:#7d8f80;font-weight:700}
+.progress-nav .step-number{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eef3ec;border:2px solid #dfe9dd;color:#8aa08c;font-size:13px;font-weight:800}
+.progress-nav .complete-step .step-number{background:#2f8f5b;border-color:#2f8f5b;color:#fff}
+.progress-nav .active-step .step-number{background:#fff;border-color:#12665b;color:#12665b;animation:step-pulse 1.8s infinite}
+.progress-nav .active-step button{color:#12665b}
+.progress-nav .complete-step button{color:#3c7a52}
+.progress-nav .step-emoji{margin-right:4px}
+@keyframes step-pulse{0%{box-shadow:0 0 0 0 rgba(18,102,91,.35)}70%{box-shadow:0 0 0 11px rgba(18,102,91,0)}100%{box-shadow:0 0 0 0 rgba(18,102,91,0)}}
+@media(max-width:820px){.progress-nav ol{gap:2px}.progress-nav li{min-width:74px}.progress-nav li button{font-size:10.5px;min-height:58px}.progress-nav .step-number{width:30px;height:30px}}
+.seed-mascot{position:fixed;right:16px;bottom:14px;z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none;max-width:min(320px,74vw)}
+.seed-mascot svg{width:64px;height:72px;display:block;filter:drop-shadow(0 6px 12px rgba(46,94,58,.18))}
+.seed-mascot .mascot-body{animation:mascot-bob 3.2s ease-in-out infinite}
+.seed-mascot .mascot-eyes{transform-origin:70px 84px;animation:mascot-blink 4.4s infinite}
+@keyframes mascot-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes mascot-blink{0%,91%,100%{transform:scaleY(1)}94%,96%{transform:scaleY(.1)}}
+.seed-mascot-bubble{background:#fff;border:1px solid #cfe3cd;border-radius:14px;padding:10px 14px;font-size:13px;font-weight:600;color:#2c5a36;box-shadow:0 4px 14px rgba(46,94,58,.14);animation:bubble-in .3s cubic-bezier(.2,1.4,.5,1) both}
+.seed-mascot-bubble.mood-cheer{background:#e8f7e4;border-color:#a9d9a0}
+.seed-mascot-bubble.mood-sad{background:#fdf1e7;border-color:#eac9a2;color:#7a4d1f}
+@keyframes bubble-in{from{opacity:0;transform:translateY(8px) scale(.92)}to{opacity:1;transform:none}}
+.tube-card{position:relative}
+.tube-sparkle{position:absolute;top:8px;right:10px;font-size:22px;animation:sparkle-pop 1s ease-out forwards;pointer-events:none;z-index:3}
+@keyframes sparkle-pop{0%{opacity:0;transform:scale(.4) rotate(-20deg)}35%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{opacity:0;transform:scale(.9) translateY(-16px)}}
+.day-badge{animation:day-pop .7s cubic-bezier(.2,1.5,.4,1)}
+@keyframes day-pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}
+.badge-shelf{margin:16px 0;border:1px solid #d8e3d1;border-radius:16px;padding:14px 16px;background:#fff}
+.badge-shelf>span{font-size:11px;letter-spacing:2px;font-weight:800;color:#7d8f80}
+.badge-shelf ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;list-style:none;margin:10px 0 0;padding:0}
+.badge-shelf li{display:flex;gap:10px;align-items:center;border:1px solid #dfe9dd;border-radius:12px;padding:10px 12px;background:#f7faf5}
+.badge-shelf li.locked{opacity:.5;filter:grayscale(.8)}
+.badge-shelf .badge-icon{font-size:22px}
+.badge-shelf strong{display:block;font-size:13px;color:#2c5a36}
+.badge-shelf small{font-size:11px;color:#7d8f80}
+.grow-show{display:flex;justify-content:center;margin:6px 0 2px}
+.grow-show-art{height:150px;width:96px;animation:grow-float 4s ease-in-out infinite}
+@keyframes grow-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero-stage{display:flex;justify-content:center;animation:hero-breathe 5s ease-in-out infinite}
+@keyframes hero-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.icon-button.speaking{color:#12665b;box-shadow:inset 0 0 0 2px #12665b;animation:step-pulse 1.6s infinite}
 .report-code-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
 .report-code-row strong{font-size:12px;background:#e9f1e0;border-radius:6px;padding:7px 10px;color:#587945;overflow-wrap:anywhere;font-weight:600}

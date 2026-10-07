@@ -3,6 +3,7 @@ import { type AppState, type ClassRecord, type Session, type TeacherSettings } f
 import { localRepository } from '../data/storage';
 import { normalizeSettings, normalizeTeacherPin } from '../domain/settings';
 import { playCue } from '../sound';
+import { buzz } from '../domain/fx';
 interface LabContextValue { state: AppState; saveError: boolean; updateSession: (session: Session | null) => void; updateSettings: (settings: TeacherSettings) => void; updateRecords: (records: ClassRecord[]) => void; updateTeacherPin: (pin: string) => void; toggleSound: () => void }
 const LabContext = createContext<LabContextValue | null>(null);
 export function LabProvider({ children }: { children: ReactNode }) {
@@ -11,10 +12,13 @@ export function LabProvider({ children }: { children: ReactNode }) {
   useEffect(() => { try { localRepository.save(state); setSaveError(false); } catch { setSaveError(true); } }, [state]);
   const updateSession = (session: Session | null) => {
     if(state.soundEnabled&&session&&state.session){
-      if(session.completedAt&&!state.session.completedAt)playCue('complete');
-      else if(session.completedSteps.length>state.session.completedSteps.length)playCue('correct');
-      else if(Object.values(session.tubes).some(tube=>tube.materials.length>state.session!.tubes[tube.id].materials.length))playCue('drop');
-      else if(Object.values(session.tubes).some(tube=>tube.attempts>state.session!.tubes[tube.id].attempts&&!tube.validated))playCue('wrong');
+      if(session.completedAt&&!state.session.completedAt){playCue('complete');buzz([16,50,16,50,24]);}
+      else if(session.completedSteps.length>state.session.completedSteps.length){playCue('correct');buzz([12,30,12]);}
+      else {
+        const added=Object.values(session.tubes).find(tube=>tube.materials.length>(state.session!.tubes[tube.id]?.materials.length??0));
+        if(added){const material=added.materials[added.materials.length-1];playCue(material==='water'||material==='cooledBoiledWater'||material==='oil'?'pour':'drop');buzz(12);}
+        else if(Object.values(session.tubes).some(tube=>tube.attempts>(state.session!.tubes[tube.id]?.attempts??0)&&!tube.validated)){playCue('wrong');buzz(40);}
+      }
     }
     setState(s => ({ ...s, session: session ? { ...session, updatedAt: new Date().toISOString() } : null }));
   };
