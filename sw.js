@@ -1,7 +1,7 @@
 
-const CACHE='sci1-lab-f3017fae665aee12';
+const CACHE='sci1-lab-be183a5003e7966e';
 const BASE=new URL('./',self.location).href;
-const FILES=["index.html","favicon.svg","icon-192.png","icon-512.png","apple-touch-icon.png","manifest.webmanifest","panduan-kelas.html","assets/index-CLPFatC1.css","assets/index-C2mS7OA2.js","assets/CodeScanner-B8TNm2ME.js","assets/browser-nIx4r07R.js"].map(path=>new URL(path,BASE).href);
+const FILES=["index.html","favicon.svg","icon-192.png","icon-512.png","apple-touch-icon.png","manifest.webmanifest","panduan-kelas.html","assets/index-DZU_natg.css","assets/index-DdyKyR9W.js","assets/CodeScanner-iW955WlQ.js","assets/browser-BA8NtI0Y.js"].map(path=>new URL(path,BASE).href);
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('sci1-lab-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('message',event=>{if(event.data==='ACTIVATE_UPDATE')self.skipWaiting();});
